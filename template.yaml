@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Resources:
+  CICDLambdaFunctionRoleAnash:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Policies:
+        - PolicyName: CICDLambdaFunctionPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - "arn:aws:logs:*:*:*"
+                Effect: Allow
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - "sts:AssumeRole"
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+  CICDLambdaFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Role: !GetAtt CICDLambdaFunctionRoleAnash.Arn
+      Runtime: "nodejs14.x"
+      Handler: index.handler
+      CodeUri: .
+ 
